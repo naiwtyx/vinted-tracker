@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#FAFAFA" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -18,20 +18,27 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header : logo + tabs -->
   <header class="header">
     <div class="header-inner">
       <span class="logo">Vinted Tracker</span>
-      <div class="header-actions">
-        <a href="./index.html"     class="nav-link" style="color:var(--accent);background:var(--accent-soft)">Tracker</a>
-        <a href="./analytics.html" class="nav-link">Analyses</a>
-        <button class="btn-icon-sm" id="btn-calc"     title="Calculateur prix">🧮</button>
-        <button class="btn-icon-sm" id="btn-export"   title="Export CSV">↓</button>
-        <button class="btn-icon-sm" id="btn-settings" title="Paramètres">⚙</button>
-        <button class="btn-primary" id="btn-add">+ Ajouter</button>
-      </div>
+      <nav class="tabs">
+        <a href="./index.html"     class="tab active">Tracker</a>
+        <a href="./analytics.html" class="tab">Analyses</a>
+      </nav>
     </div>
   </header>
+
+  <!-- Toolbar : action principale + icônes -->
+  <div class="toolbar">
+    <button class="btn-primary" id="btn-add">+ Ajouter un article</button>
+    <div class="toolbar-spacer"></div>
+    <div class="toolbar-icons">
+      <button class="btn-icon-sm" id="btn-calc"     title="Calculateur prix">🧮</button>
+      <button class="btn-icon-sm" id="btn-export"   title="Export CSV">↓</button>
+      <button class="btn-icon-sm" id="btn-settings" title="Paramètres">⚙</button>
+    </div>
+  </div>
 
   <!-- Dashboard -->
   <section class="dashboard">
@@ -63,18 +70,6 @@
       <p>Clique sur <strong>+ Ajouter</strong> pour commencer.</p>
     </div>
   </main>
-
-  <!-- FAB mobile : actions flottantes -->
-  <div class="fab-actions">
-    <button class="btn-icon-sm" title="Calculateur"
-            onclick="document.getElementById('btn-calc').click()">🧮</button>
-    <button class="btn-icon-sm" title="Export CSV"
-            onclick="document.getElementById('btn-export').click()">↓</button>
-    <button class="btn-icon-sm" title="Paramètres"
-            onclick="document.getElementById('btn-settings').click()">⚙</button>
-  </div>
-  <button class="fab-add" title="Ajouter un article"
-          onclick="document.getElementById('btn-add').click()">+</button>
 
   <!-- ── Modal ajout / modif ── -->
   <div class="modal-overlay" id="modal" style="display:none">
@@ -181,7 +176,7 @@
       <div class="preview-box" id="calc-result" style="display:none">
         <div class="preview-row">
           <span>Prix de vente conseillé</span>
-          <span id="calc-vente" class="green" style="font-size:18px;font-weight:700">—</span>
+          <span id="calc-vente" class="green" style="font-size:17px;font-weight:700">—</span>
         </div>
         <div class="preview-row"><span>Frais Vinted estimés</span><span id="calc-frais">—</span></div>
         <div class="preview-row"><span>Bénéfice net</span><span id="calc-benefice">—</span></div>

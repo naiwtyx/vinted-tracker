@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#FAFAFA" />
   <title>Analyses — Vinted Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -12,14 +12,13 @@
 </head>
 <body>
 
-  <!-- Header -->
   <header class="header">
     <div class="header-inner">
       <span class="logo">Vinted Tracker</span>
-      <div class="header-actions">
-        <a href="./index.html"     class="nav-link">Tracker</a>
-        <a href="./analytics.html" class="nav-link" style="color:var(--accent);background:var(--accent-soft)">Analyses</a>
-      </div>
+      <nav class="tabs">
+        <a href="./index.html"     class="tab">Tracker</a>
+        <a href="./analytics.html" class="tab active">Analyses</a>
+      </nav>
     </div>
   </header>
 
@@ -29,7 +28,6 @@
 
   <div id="analytics-content" style="display:none">
 
-    <!-- KPI Cards -->
     <section class="dashboard kpi-grid">
       <div class="stat-card">
         <span class="stat-label">Bénéfice total</span>
@@ -57,7 +55,6 @@
       </div>
     </section>
 
-    <!-- Graphiques -->
     <section class="analytics-section">
 
       <div class="chart-card full">
@@ -79,9 +76,7 @@
       <div class="chart-card">
         <h3 class="chart-card-title">Répartition par catégorie</h3>
         <div class="chart-wrap doughnut"><canvas id="chart-doughnut"></canvas></div>
-        <p class="chart-empty" id="empty-doughnut" style="display:none">
-          Aucun article.
-        </p>
+        <p class="chart-empty" id="empty-doughnut" style="display:none">Aucun article.</p>
       </div>
 
       <div class="chart-card">
@@ -89,9 +84,7 @@
         <div class="table-scroll">
           <table class="data-table" id="cat-table">
             <thead>
-              <tr>
-                <th>Catégorie</th><th>Vendus</th><th>Marge moy.</th><th>Temps moy.</th>
-              </tr>
+              <tr><th>Catégorie</th><th>Vendus</th><th>Marge moy.</th><th>Temps moy.</th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -102,9 +95,7 @@
         <h3 class="chart-card-title">Top 5 — Meilleures marges</h3>
         <div class="table-scroll">
           <table class="data-table" id="top5-best">
-            <thead>
-              <tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr>
-            </thead>
+            <thead><tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -114,9 +105,7 @@
         <h3 class="chart-card-title">Top 5 — Pires marges</h3>
         <div class="table-scroll">
           <table class="data-table" id="top5-worst">
-            <thead>
-              <tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr>
-            </thead>
+            <thead><tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
