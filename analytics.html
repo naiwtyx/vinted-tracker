@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="theme-color" content="#FAFAFA" />
   <title>Analyses — Vinted Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
   <link rel="stylesheet" href="./static/css/style.css" />
 </head>
 <body>
@@ -12,12 +15,15 @@
   <!-- Header -->
   <header class="header">
     <div class="header-inner">
-      <span class="logo">📊 Analyses</span>
-      <a href="./index.html" class="nav-link">← 📦 Tracker</a>
+      <span class="logo">Vinted Tracker</span>
+      <div class="header-actions">
+        <a href="./index.html"     class="nav-link">Tracker</a>
+        <a href="./analytics.html" class="nav-link" style="color:var(--accent);background:var(--accent-soft)">Analyses</a>
+      </div>
     </div>
   </header>
 
-  <div id="loading" class="empty-state" style="padding:60px 24px">
+  <div id="loading" class="empty-state" style="padding:80px 24px">
     <p>Chargement des données…</p>
   </div>
 
@@ -26,7 +32,11 @@
     <!-- KPI Cards -->
     <section class="dashboard kpi-grid">
       <div class="stat-card">
-        <span class="stat-label">Bénéf. moyen / article vendu</span>
+        <span class="stat-label">Bénéfice total</span>
+        <span class="stat-value green" id="kpi-benefice-total">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Bénéfice moyen / vente</span>
         <span class="stat-value green" id="kpi-benefice-moyen">—</span>
       </div>
       <div class="stat-card">
@@ -45,45 +55,37 @@
         <span class="stat-label">Meilleure catégorie</span>
         <span class="stat-value" id="kpi-best-cat">—</span>
       </div>
-      <div class="stat-card">
-        <span class="stat-label">Bénéfice total</span>
-        <span class="stat-value green" id="kpi-benefice-total">—</span>
-      </div>
     </section>
 
     <!-- Graphiques -->
     <section class="analytics-section">
 
-      <!-- Bar : bénéfice par mois (pleine largeur) -->
       <div class="chart-card full">
-        <h3 class="chart-card-title">📊 Bénéfice mensuel (€)</h3>
+        <h3 class="chart-card-title">Bénéfice mensuel</h3>
         <div class="chart-wrap"><canvas id="chart-bar"></canvas></div>
         <p class="chart-empty" id="empty-bar" style="display:none">
-          Aucune vente avec date de vente renseignée.
+          Aucune vente avec date renseignée.
         </p>
       </div>
 
-      <!-- Ligne : bénéfice cumulé -->
       <div class="chart-card full">
-        <h3 class="chart-card-title">📈 Évolution du bénéfice cumulé (€)</h3>
+        <h3 class="chart-card-title">Évolution du bénéfice cumulé</h3>
         <div class="chart-wrap"><canvas id="chart-line"></canvas></div>
         <p class="chart-empty" id="empty-line" style="display:none">
-          Aucune vente avec date de vente renseignée.
+          Aucune vente avec date renseignée.
         </p>
       </div>
 
-      <!-- Camembert : répartition catégories -->
-      <div class="chart-card half">
-        <h3 class="chart-card-title">🥧 Répartition par catégorie</h3>
+      <div class="chart-card">
+        <h3 class="chart-card-title">Répartition par catégorie</h3>
         <div class="chart-wrap doughnut"><canvas id="chart-doughnut"></canvas></div>
         <p class="chart-empty" id="empty-doughnut" style="display:none">
           Aucun article.
         </p>
       </div>
 
-      <!-- Tableau par catégorie -->
-      <div class="chart-card half">
-        <h3 class="chart-card-title">🏷️ Analyse par catégorie</h3>
+      <div class="chart-card">
+        <h3 class="chart-card-title">Analyse par catégorie</h3>
         <div class="table-scroll">
           <table class="data-table" id="cat-table">
             <thead>
@@ -96,9 +98,8 @@
         </div>
       </div>
 
-      <!-- Top 5 meilleurs -->
-      <div class="chart-card half">
-        <h3 class="chart-card-title">🏆 Top 5 — Meilleures marges</h3>
+      <div class="chart-card">
+        <h3 class="chart-card-title">Top 5 — Meilleures marges</h3>
         <div class="table-scroll">
           <table class="data-table" id="top5-best">
             <thead>
@@ -109,9 +110,8 @@
         </div>
       </div>
 
-      <!-- Top 5 pires -->
-      <div class="chart-card half">
-        <h3 class="chart-card-title">📉 Top 5 — Pires marges</h3>
+      <div class="chart-card">
+        <h3 class="chart-card-title">Top 5 — Pires marges</h3>
         <div class="table-scroll">
           <table class="data-table" id="top5-worst">
             <thead>

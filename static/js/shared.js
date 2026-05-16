@@ -14,11 +14,11 @@ const FEE_RATE  = 0.05;
 const FEE_FIXED = 0.70;
 
 const CAT_COLORS = {
-  'Sneakers':     '#7c3aed',
-  'Vêtements':    '#2563eb',
-  'Accessoires':  '#db2777',
-  'Électronique': '#0891b2',
-  'Autre':        '#64748b',
+  'Sneakers':     '#1F6BBD',
+  'Vêtements':    '#4F46E5',
+  'Accessoires':  '#7C3AED',
+  'Électronique': '#0E7490',
+  'Autre':        '#64748B',
 };
 
 // ── Calcul article ────────────────────────────────────────

@@ -1,7 +1,7 @@
 // ── Config Chart.js globale ───────────────────────────────
-Chart.defaults.color         = '#94a3b8';
-Chart.defaults.borderColor   = 'rgba(255,255,255,0.06)';
-Chart.defaults.font.family   = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+Chart.defaults.color         = '#64748B';
+Chart.defaults.borderColor   = '#EEF2F6';
+Chart.defaults.font.family   = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 Chart.defaults.font.size     = 12;
 
 const CHART_OPTS_BASE = {
@@ -105,8 +105,8 @@ function renderBarChart(articles) {
       labels,
       datasets: [{
         data,
-        backgroundColor: data.map(v => v >= 0 ? 'rgba(16,185,129,0.65)' : 'rgba(239,68,68,0.65)'),
-        borderColor:     data.map(v => v >= 0 ? '#10b981' : '#ef4444'),
+        backgroundColor: data.map(v => v >= 0 ? 'rgba(45,125,210,0.75)' : 'rgba(220,38,38,0.65)'),
+        borderColor:     data.map(v => v >= 0 ? '#2D7DD2' : '#DC2626'),
         borderWidth: 1,
         borderRadius: 5,
       }],
@@ -152,11 +152,11 @@ function renderLineChart(articles) {
       labels,
       datasets: [{
         data,
-        borderColor: '#7c3aed',
-        backgroundColor: 'rgba(124,58,237,0.12)',
+        borderColor: '#2D7DD2',
+        backgroundColor: 'rgba(45,125,210,0.10)',
         borderWidth: 2,
         pointRadius: data.length < 30 ? 4 : 1,
-        pointBackgroundColor: '#7c3aed',
+        pointBackgroundColor: '#2D7DD2',
         fill: true,
         tension: 0.3,
       }],
