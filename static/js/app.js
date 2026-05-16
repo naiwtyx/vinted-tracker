@@ -1,7 +1,7 @@
 // ── Config Supabase ───────────────────────────────────────
 // Remplace ces deux valeurs par celles de ton projet Supabase
 // (Settings → API dans le dashboard)
-const SUPABASE_URL = 'https://glojwzaswaoradcxeqmx.supabase.co/rest/v1/';
+const SUPABASE_URL = 'https://glojwzaswaoradcxeqmx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2p3emFzd2FvcmFkY3hlcW14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MjMzNjcsImV4cCI6MjA5NDQ5OTM2N30.1DC5oDCa8667Nfjc9YL-xy7ZNvVgaE2dWFv4bKyp_GQ';
 
 const { createClient } = window.supabase;
