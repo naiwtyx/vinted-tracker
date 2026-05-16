@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Vinted Tracker" />
+  <title>Vinted Tracker</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./static/icons/icon-192.png" />
+  <link rel="stylesheet" href="./static/css/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-inner">
+        <span class="logo">📦 Vinted Tracker</span>
+        <button class="btn-primary" id="btn-add">+ Ajouter</button>
+      </div>
+    </header>
+
+    <!-- Dashboard -->
+    <section class="dashboard" id="dashboard">
+      <div class="stat-card">
+        <span class="stat-label">Bénéfice total</span>
+        <span class="stat-value green" id="stat-benefice">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Marge moyenne</span>
+        <span class="stat-value" id="stat-marge">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Articles vendus</span>
+        <span class="stat-value" id="stat-vendus">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Capital immobilisé</span>
+        <span class="stat-value orange" id="stat-capital">—</span>
+      </div>
+    </section>
+
+    <!-- Filtres -->
+    <div class="filters">
+      <button class="filter-btn active" data-filter="tous">Tous</button>
+      <button class="filter-btn" data-filter="en stock">En stock</button>
+      <button class="filter-btn" data-filter="vendu">Vendus</button>
+    </div>
+
+    <!-- Liste des articles -->
+    <main class="article-list" id="article-list">
+      <div class="empty-state" id="empty-state" style="display:none">
+        <p>Aucun article pour l'instant.</p>
+        <p>Clique sur <strong>+ Ajouter</strong> pour commencer !</p>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Modal ajout/modif -->
+  <div class="modal-overlay" id="modal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Ajouter un article</h2>
+        <button class="btn-close" id="modal-close">✕</button>
+      </div>
+      <form id="article-form" autocomplete="off">
+        <input type="hidden" id="article-id" />
+
+        <div class="form-group">
+          <label for="nom">Nom de l'article *</label>
+          <input type="text" id="nom" placeholder="Ex: Nike Air Max 90" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prix_achat">Prix d'achat (€) *</label>
+            <input type="number" id="prix_achat" step="0.01" min="0" placeholder="0.00" required />
+          </div>
+          <div class="form-group">
+            <label for="prix_vente">Prix de vente (€) *</label>
+            <input type="number" id="prix_vente" step="0.01" min="0" placeholder="0.00" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="frais_vinted">
+            Frais Vinted (€)
+            <span class="label-hint" id="frais-hint">calculés automatiquement</span>
+          </label>
+          <input type="number" id="frais_vinted" step="0.01" min="0" placeholder="Laisse vide = auto (5% + 0.70€)" />
+        </div>
+
+        <div class="form-group">
+          <label for="statut">Statut</label>
+          <select id="statut">
+            <option value="en stock">En stock</option>
+            <option value="vendu">Vendu</option>
+          </select>
+        </div>
+
+        <!-- Aperçu bénéfice -->
+        <div class="preview-box" id="preview-box" style="display:none">
+          <div class="preview-row">
+            <span>Frais estimés</span>
+            <span id="prev-frais">—</span>
+          </div>
+          <div class="preview-row">
+            <span>Bénéfice net</span>
+            <span id="prev-benefice" class="green">—</span>
+          </div>
+          <div class="preview-row">
+            <span>Marge</span>
+            <span id="prev-marge">—</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" id="form-cancel">Annuler</button>
+          <button type="submit" class="btn-primary" id="form-submit">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal confirmation suppression -->
+  <div class="modal-overlay" id="confirm-modal" style="display:none">
+    <div class="modal confirm-modal">
+      <p>Supprimer cet article ?</p>
+      <div class="form-actions">
+        <button class="btn-secondary" id="confirm-cancel">Annuler</button>
+        <button class="btn-danger" id="confirm-ok">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./static/js/app.js"></script>
+</body>
+</html>
