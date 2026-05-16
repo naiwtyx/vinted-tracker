@@ -11,112 +11,151 @@
   <link rel="stylesheet" href="./static/css/style.css" />
 </head>
 <body>
+<div class="layout">
 
-  <header class="header">
-    <div class="header-inner">
-      <span class="logo">Vinted Tracker</span>
-      <nav class="tabs">
-        <a href="./index.html"     class="tab">Tracker</a>
-        <a href="./analytics.html" class="tab active">Analyses</a>
-      </nav>
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">Vinted Tracker</span>
+      <button class="sidebar-close" id="sidebar-close">✕</button>
     </div>
-  </header>
 
-  <div id="loading" class="empty-state" style="padding:80px 24px">
-    <p>Chargement des données…</p>
+    <span class="sidebar-section">Navigation</span>
+    <nav class="sidebar-nav">
+      <a href="./index.html" class="sidebar-link">
+        <span class="sidebar-link-icon">📦</span> Tracker
+      </a>
+      <a href="./analytics.html" class="sidebar-link active">
+        <span class="sidebar-link-icon">📊</span> Analyses
+      </a>
+    </nav>
+
+    <span class="sidebar-section">Informations</span>
+    <div class="sidebar-actions">
+      <div class="sidebar-action" style="cursor:default;opacity:.6;font-size:13px;padding:8px 12px;">
+        Les données sont chargées depuis Supabase en temps réel.
+      </div>
+    </div>
+  </aside>
+
+  <!-- Overlay mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- ── Contenu principal ── -->
+  <div class="main">
+
+    <header class="topbar">
+      <button class="hamburger" id="hamburger">☰</button>
+      <span class="page-title">Analyses</span>
+    </header>
+
+    <div class="page-content">
+
+      <div id="loading" class="empty-state" style="padding:60px 0">
+        <p>Chargement des données…</p>
+      </div>
+
+      <div id="analytics-content" style="display:none">
+
+        <section class="dashboard kpi-grid">
+          <div class="stat-card">
+            <span class="stat-label">Bénéfice total</span>
+            <span class="stat-value green" id="kpi-benefice-total">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Bénéfice moyen / vente</span>
+            <span class="stat-value green" id="kpi-benefice-moyen">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Taux de rotation</span>
+            <span class="stat-value" id="kpi-rotation">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Temps moyen de vente</span>
+            <span class="stat-value" id="kpi-temps-moyen">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Mois le plus rentable</span>
+            <span class="stat-value" id="kpi-meilleur-mois">—</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Meilleure catégorie</span>
+            <span class="stat-value" id="kpi-best-cat">—</span>
+          </div>
+        </section>
+
+        <section class="analytics-section">
+
+          <div class="chart-card full">
+            <h3 class="chart-card-title">Bénéfice mensuel</h3>
+            <div class="chart-wrap"><canvas id="chart-bar"></canvas></div>
+            <p class="chart-empty" id="empty-bar" style="display:none">Aucune vente avec date renseignée.</p>
+          </div>
+
+          <div class="chart-card full">
+            <h3 class="chart-card-title">Évolution du bénéfice cumulé</h3>
+            <div class="chart-wrap"><canvas id="chart-line"></canvas></div>
+            <p class="chart-empty" id="empty-line" style="display:none">Aucune vente avec date renseignée.</p>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="chart-card-title">Répartition par catégorie</h3>
+            <div class="chart-wrap doughnut"><canvas id="chart-doughnut"></canvas></div>
+            <p class="chart-empty" id="empty-doughnut" style="display:none">Aucun article.</p>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="chart-card-title">Analyse par catégorie</h3>
+            <div class="table-scroll">
+              <table class="data-table" id="cat-table">
+                <thead><tr><th>Catégorie</th><th>Vendus</th><th>Marge moy.</th><th>Temps moy.</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="chart-card-title">Top 5 — Meilleures marges</h3>
+            <div class="table-scroll">
+              <table class="data-table" id="top5-best">
+                <thead><tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3 class="chart-card-title">Top 5 — Pires marges</h3>
+            <div class="table-scroll">
+              <table class="data-table" id="top5-worst">
+                <thead><tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div id="analytics-content" style="display:none">
-
-    <section class="dashboard kpi-grid">
-      <div class="stat-card">
-        <span class="stat-label">Bénéfice total</span>
-        <span class="stat-value green" id="kpi-benefice-total">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Bénéfice moyen / vente</span>
-        <span class="stat-value green" id="kpi-benefice-moyen">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Taux de rotation</span>
-        <span class="stat-value" id="kpi-rotation">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Temps moyen de vente</span>
-        <span class="stat-value" id="kpi-temps-moyen">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Mois le plus rentable</span>
-        <span class="stat-value" id="kpi-meilleur-mois">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Meilleure catégorie</span>
-        <span class="stat-value" id="kpi-best-cat">—</span>
-      </div>
-    </section>
-
-    <section class="analytics-section">
-
-      <div class="chart-card full">
-        <h3 class="chart-card-title">Bénéfice mensuel</h3>
-        <div class="chart-wrap"><canvas id="chart-bar"></canvas></div>
-        <p class="chart-empty" id="empty-bar" style="display:none">
-          Aucune vente avec date renseignée.
-        </p>
-      </div>
-
-      <div class="chart-card full">
-        <h3 class="chart-card-title">Évolution du bénéfice cumulé</h3>
-        <div class="chart-wrap"><canvas id="chart-line"></canvas></div>
-        <p class="chart-empty" id="empty-line" style="display:none">
-          Aucune vente avec date renseignée.
-        </p>
-      </div>
-
-      <div class="chart-card">
-        <h3 class="chart-card-title">Répartition par catégorie</h3>
-        <div class="chart-wrap doughnut"><canvas id="chart-doughnut"></canvas></div>
-        <p class="chart-empty" id="empty-doughnut" style="display:none">Aucun article.</p>
-      </div>
-
-      <div class="chart-card">
-        <h3 class="chart-card-title">Analyse par catégorie</h3>
-        <div class="table-scroll">
-          <table class="data-table" id="cat-table">
-            <thead>
-              <tr><th>Catégorie</th><th>Vendus</th><th>Marge moy.</th><th>Temps moy.</th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <h3 class="chart-card-title">Top 5 — Meilleures marges</h3>
-        <div class="table-scroll">
-          <table class="data-table" id="top5-best">
-            <thead><tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <h3 class="chart-card-title">Top 5 — Pires marges</h3>
-        <div class="table-scroll">
-          <table class="data-table" id="top5-worst">
-            <thead><tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-
-    </section>
-
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="./static/js/shared.js"></script>
-  <script src="./static/js/analytics.js"></script>
+<script>
+  const sidebar  = document.getElementById('sidebar');
+  const overlay  = document.getElementById('sidebar-overlay');
+  const hamburger = document.getElementById('hamburger');
+  const sidebarClose = document.getElementById('sidebar-close');
+  function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('visible'); document.body.style.overflow = 'hidden'; }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); document.body.style.overflow = ''; }
+  hamburger.addEventListener('click', openSidebar);
+  sidebarClose.addEventListener('click', closeSidebar);
+  overlay.addEventListener('click', closeSidebar);
+  sidebar.querySelectorAll('.sidebar-link').forEach(el =>
+    el.addEventListener('click', () => { if (window.innerWidth < 768) closeSidebar(); })
+  );
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="./static/js/shared.js"></script>
+<script src="./static/js/analytics.js"></script>
 </body>
 </html>
