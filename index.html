@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#1a1a2e" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Vinted Tracker" />
@@ -19,12 +20,17 @@
     <header class="header">
       <div class="header-inner">
         <span class="logo">📦 Vinted Tracker</span>
-        <button class="btn-primary" id="btn-add">+ Ajouter</button>
+        <div class="header-actions">
+          <button class="btn-icon-sm" id="btn-calc"     title="Calculateur prix">🧮</button>
+          <button class="btn-icon-sm" id="btn-export"   title="Export CSV">📥</button>
+          <button class="btn-icon-sm" id="btn-settings" title="Paramètres">⚙️</button>
+          <button class="btn-primary" id="btn-add">+ Ajouter</button>
+        </div>
       </div>
     </header>
 
     <!-- Dashboard -->
-    <section class="dashboard" id="dashboard">
+    <section class="dashboard">
       <div class="stat-card">
         <span class="stat-label">Bénéfice total</span>
         <span class="stat-value green" id="stat-benefice">—</span>
@@ -40,6 +46,22 @@
       <div class="stat-card">
         <span class="stat-label">Capital immobilisé</span>
         <span class="stat-value orange" id="stat-capital">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Temps moyen de vente</span>
+        <span class="stat-value" id="stat-temps">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Meilleure catégorie</span>
+        <span class="stat-value" id="stat-categorie">—</span>
+      </div>
+    </section>
+
+    <!-- Graphique -->
+    <section class="chart-section">
+      <span class="chart-title">📊 Bénéfice mensuel (€)</span>
+      <div class="chart-container">
+        <canvas id="chart-benefice"></canvas>
       </div>
     </section>
 
@@ -60,7 +82,7 @@
 
   </div>
 
-  <!-- Modal ajout/modif -->
+  <!-- ── Modal ajout / modif ── -->
   <div class="modal-overlay" id="modal" style="display:none">
     <div class="modal">
       <div class="modal-header">
@@ -69,10 +91,32 @@
       </div>
       <form id="article-form" autocomplete="off">
         <input type="hidden" id="article-id" />
+        <input type="hidden" id="article-photo-url" />
+
+        <!-- Photo -->
+        <div class="form-group">
+          <label>Photo</label>
+          <div class="photo-upload" id="photo-upload-area">
+            <img id="photo-preview" src="" alt="" style="display:none" />
+            <span id="photo-placeholder">📷 Clique pour ajouter une photo</span>
+            <input type="file" id="photo-input" accept="image/*" style="display:none" />
+          </div>
+        </div>
 
         <div class="form-group">
           <label for="nom">Nom de l'article *</label>
           <input type="text" id="nom" placeholder="Ex: Nike Air Max 90" required />
+        </div>
+
+        <div class="form-group">
+          <label for="categorie">Catégorie</label>
+          <select id="categorie">
+            <option value="Sneakers">Sneakers</option>
+            <option value="Vêtements">Vêtements</option>
+            <option value="Accessoires">Accessoires</option>
+            <option value="Électronique">Électronique</option>
+            <option value="Autre" selected>Autre</option>
+          </select>
         </div>
 
         <div class="form-row">
@@ -89,9 +133,20 @@
         <div class="form-group">
           <label for="frais_vinted">
             Frais Vinted (€)
-            <span class="label-hint" id="frais-hint">calculés automatiquement</span>
+            <span class="label-hint">calculés automatiquement</span>
           </label>
           <input type="number" id="frais_vinted" step="0.01" min="0" placeholder="Laisse vide = auto (5% + 0.70€)" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date_achat">Date d'achat</label>
+            <input type="date" id="date_achat" />
+          </div>
+          <div class="form-group" id="date-vente-group">
+            <label for="date_vente">Date de vente</label>
+            <input type="date" id="date_vente" />
+          </div>
         </div>
 
         <div class="form-group">
@@ -126,17 +181,70 @@
     </div>
   </div>
 
-  <!-- Modal confirmation suppression -->
+  <!-- ── Modal calculateur ── -->
+  <div class="modal-overlay" id="calc-modal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>🧮 Calculateur de prix</h2>
+        <button class="btn-close" id="calc-close">✕</button>
+      </div>
+      <div class="form-group">
+        <label for="calc-achat">Prix d'achat (€)</label>
+        <input type="number" id="calc-achat" step="0.01" min="0" placeholder="0.00" />
+      </div>
+      <div class="form-group">
+        <label for="calc-marge">Marge souhaitée (%)</label>
+        <input type="number" id="calc-marge" step="1" min="0" placeholder="30" />
+      </div>
+      <div class="preview-box" id="calc-result" style="display:none">
+        <div class="preview-row">
+          <span>Prix de vente conseillé</span>
+          <span id="calc-vente" class="green" style="font-size:20px;font-weight:700">—</span>
+        </div>
+        <div class="preview-row">
+          <span>Frais Vinted estimés</span>
+          <span id="calc-frais">—</span>
+        </div>
+        <div class="preview-row">
+          <span>Bénéfice net</span>
+          <span id="calc-benefice">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal paramètres ── -->
+  <div class="modal-overlay" id="settings-modal" style="display:none">
+    <div class="modal confirm-modal">
+      <div class="modal-header">
+        <h2>⚙️ Paramètres</h2>
+        <button class="btn-close" id="settings-close">✕</button>
+      </div>
+      <div class="form-group">
+        <label for="setting-threshold">Alerte stock (jours)</label>
+        <input type="number" id="setting-threshold" min="1" max="365" value="30" />
+        <span class="label-hint" style="margin-top:6px;display:block">
+          Badge rouge si un article est en stock depuis plus de X jours
+        </span>
+      </div>
+      <div class="form-actions" style="margin-top:8px">
+        <button class="btn-primary" id="settings-save">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal confirmation suppression ── -->
   <div class="modal-overlay" id="confirm-modal" style="display:none">
     <div class="modal confirm-modal">
       <p>Supprimer cet article ?</p>
       <div class="form-actions">
         <button class="btn-secondary" id="confirm-cancel">Annuler</button>
-        <button class="btn-danger" id="confirm-ok">Supprimer</button>
+        <button class="btn-danger"    id="confirm-ok">Supprimer</button>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="./static/js/app.js"></script>
 </body>
 </html>

@@ -1,6 +1,5 @@
-const CACHE = 'vinted-tracker-v2';
+const CACHE = 'vinted-tracker-v3';
 const STATIC = [
-  './',
   './static/css/style.css',
   './static/js/app.js',
   './manifest.json',
@@ -21,15 +20,22 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  if (!e.request.url.startsWith('http')) return;
   const url = new URL(e.request.url);
 
-  // Supabase : réseau uniquement, pas de cache
+  // index.html : toujours réseau pour avoir la dernière version
+  if (url.pathname.endsWith('/') || url.pathname.endsWith('.html')) {
+    e.respondWith(fetch(e.request).catch(() => caches.match('./')));
+    return;
+  }
+
+  // Supabase et CDN : réseau uniquement
   if (url.hostname.includes('supabase.co') || url.hostname.includes('jsdelivr.net')) {
     e.respondWith(fetch(e.request));
     return;
   }
 
-  // Statique : cache first
+  // CSS / JS / icônes : cache first
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
       const clone = res.clone();
