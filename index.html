@@ -14,73 +14,51 @@
   <link rel="stylesheet" href="./static/css/style.css" />
 </head>
 <body>
-  <div id="app">
 
-    <!-- Header -->
-    <header class="header">
-      <div class="header-inner">
-        <span class="logo">📦 Vinted Tracker</span>
-        <div class="header-actions">
-          <button class="btn-icon-sm" id="btn-calc"     title="Calculateur prix">🧮</button>
-          <button class="btn-icon-sm" id="btn-export"   title="Export CSV">📥</button>
-          <button class="btn-icon-sm" id="btn-settings" title="Paramètres">⚙️</button>
-          <button class="btn-primary" id="btn-add">+ Ajouter</button>
-        </div>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <span class="logo">📦 Vinted Tracker</span>
+      <div class="header-actions">
+        <a href="./analytics.html" class="nav-link">📊 Analyses</a>
+        <button class="btn-icon-sm" id="btn-calc"     title="Calculateur prix">🧮</button>
+        <button class="btn-icon-sm" id="btn-export"   title="Export CSV">📥</button>
+        <button class="btn-icon-sm" id="btn-settings" title="Paramètres">⚙️</button>
+        <button class="btn-primary" id="btn-add">+ Ajouter</button>
       </div>
-    </header>
-
-    <!-- Dashboard -->
-    <section class="dashboard">
-      <div class="stat-card">
-        <span class="stat-label">Bénéfice total</span>
-        <span class="stat-value green" id="stat-benefice">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Marge moyenne</span>
-        <span class="stat-value" id="stat-marge">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Articles vendus</span>
-        <span class="stat-value" id="stat-vendus">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Capital immobilisé</span>
-        <span class="stat-value orange" id="stat-capital">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Temps moyen de vente</span>
-        <span class="stat-value" id="stat-temps">—</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">Meilleure catégorie</span>
-        <span class="stat-value" id="stat-categorie">—</span>
-      </div>
-    </section>
-
-    <!-- Graphique -->
-    <section class="chart-section">
-      <span class="chart-title">📊 Bénéfice mensuel (€)</span>
-      <div class="chart-container">
-        <canvas id="chart-benefice"></canvas>
-      </div>
-    </section>
-
-    <!-- Filtres -->
-    <div class="filters">
-      <button class="filter-btn active" data-filter="tous">Tous</button>
-      <button class="filter-btn" data-filter="en stock">En stock</button>
-      <button class="filter-btn" data-filter="vendu">Vendus</button>
     </div>
+  </header>
 
-    <!-- Liste des articles -->
-    <main class="article-list" id="article-list">
-      <div class="empty-state" id="empty-state" style="display:none">
-        <p>Aucun article pour l'instant.</p>
-        <p>Clique sur <strong>+ Ajouter</strong> pour commencer !</p>
-      </div>
-    </main>
+  <!-- Dashboard rapide (3 stats) -->
+  <section class="dashboard">
+    <div class="stat-card">
+      <span class="stat-label">Bénéfice total</span>
+      <span class="stat-value" id="stat-benefice">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Articles vendus</span>
+      <span class="stat-value" id="stat-vendus">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Capital immobilisé</span>
+      <span class="stat-value orange" id="stat-capital">—</span>
+    </div>
+  </section>
 
+  <!-- Filtres -->
+  <div class="filters">
+    <button class="filter-btn active" data-filter="tous">Tous</button>
+    <button class="filter-btn" data-filter="en stock">En stock</button>
+    <button class="filter-btn" data-filter="vendu">Vendus</button>
   </div>
+
+  <!-- Liste articles -->
+  <main class="article-list" id="article-list">
+    <div class="empty-state" id="empty-state" style="display:none">
+      <p>Aucun article pour l'instant.</p>
+      <p>Clique sur <strong>+ Ajouter</strong> pour commencer !</p>
+    </div>
+  </main>
 
   <!-- ── Modal ajout / modif ── -->
   <div class="modal-overlay" id="modal" style="display:none">
@@ -93,7 +71,6 @@
         <input type="hidden" id="article-id" />
         <input type="hidden" id="article-photo-url" />
 
-        <!-- Photo -->
         <div class="form-group">
           <label>Photo</label>
           <div class="photo-upload" id="photo-upload-area">
@@ -132,8 +109,7 @@
 
         <div class="form-group">
           <label for="frais_vinted">
-            Frais Vinted (€)
-            <span class="label-hint">calculés automatiquement</span>
+            Frais Vinted (€) <span class="label-hint">calculés automatiquement</span>
           </label>
           <input type="number" id="frais_vinted" step="0.01" min="0" placeholder="Laisse vide = auto (5% + 0.70€)" />
         </div>
@@ -157,25 +133,15 @@
           </select>
         </div>
 
-        <!-- Aperçu bénéfice -->
         <div class="preview-box" id="preview-box" style="display:none">
-          <div class="preview-row">
-            <span>Frais estimés</span>
-            <span id="prev-frais">—</span>
-          </div>
-          <div class="preview-row">
-            <span>Bénéfice net</span>
-            <span id="prev-benefice" class="green">—</span>
-          </div>
-          <div class="preview-row">
-            <span>Marge</span>
-            <span id="prev-marge">—</span>
-          </div>
+          <div class="preview-row"><span>Frais estimés</span><span id="prev-frais">—</span></div>
+          <div class="preview-row"><span>Bénéfice net</span><span id="prev-benefice">—</span></div>
+          <div class="preview-row"><span>Marge</span><span id="prev-marge">—</span></div>
         </div>
 
         <div class="form-actions">
           <button type="button" class="btn-secondary" id="form-cancel">Annuler</button>
-          <button type="submit" class="btn-primary" id="form-submit">Enregistrer</button>
+          <button type="submit" class="btn-primary">Enregistrer</button>
         </div>
       </form>
     </div>
@@ -201,14 +167,8 @@
           <span>Prix de vente conseillé</span>
           <span id="calc-vente" class="green" style="font-size:20px;font-weight:700">—</span>
         </div>
-        <div class="preview-row">
-          <span>Frais Vinted estimés</span>
-          <span id="calc-frais">—</span>
-        </div>
-        <div class="preview-row">
-          <span>Bénéfice net</span>
-          <span id="calc-benefice">—</span>
-        </div>
+        <div class="preview-row"><span>Frais Vinted estimés</span><span id="calc-frais">—</span></div>
+        <div class="preview-row"><span>Bénéfice net</span><span id="calc-benefice">—</span></div>
       </div>
     </div>
   </div>
@@ -244,7 +204,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="./static/js/shared.js"></script>
   <script src="./static/js/app.js"></script>
 </body>
 </html>

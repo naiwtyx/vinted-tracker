@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>Analyses — Vinted Tracker</title>
+  <link rel="stylesheet" href="./static/css/style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <span class="logo">📊 Analyses</span>
+      <a href="./index.html" class="nav-link">← 📦 Tracker</a>
+    </div>
+  </header>
+
+  <div id="loading" class="empty-state" style="padding:60px 24px">
+    <p>Chargement des données…</p>
+  </div>
+
+  <div id="analytics-content" style="display:none">
+
+    <!-- KPI Cards -->
+    <section class="dashboard kpi-grid">
+      <div class="stat-card">
+        <span class="stat-label">Bénéf. moyen / article vendu</span>
+        <span class="stat-value green" id="kpi-benefice-moyen">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Taux de rotation</span>
+        <span class="stat-value" id="kpi-rotation">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Temps moyen de vente</span>
+        <span class="stat-value" id="kpi-temps-moyen">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Mois le plus rentable</span>
+        <span class="stat-value" id="kpi-meilleur-mois">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Meilleure catégorie</span>
+        <span class="stat-value" id="kpi-best-cat">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Bénéfice total</span>
+        <span class="stat-value green" id="kpi-benefice-total">—</span>
+      </div>
+    </section>
+
+    <!-- Graphiques -->
+    <section class="analytics-section">
+
+      <!-- Bar : bénéfice par mois (pleine largeur) -->
+      <div class="chart-card full">
+        <h3 class="chart-card-title">📊 Bénéfice mensuel (€)</h3>
+        <div class="chart-wrap"><canvas id="chart-bar"></canvas></div>
+        <p class="chart-empty" id="empty-bar" style="display:none">
+          Aucune vente avec date de vente renseignée.
+        </p>
+      </div>
+
+      <!-- Ligne : bénéfice cumulé -->
+      <div class="chart-card full">
+        <h3 class="chart-card-title">📈 Évolution du bénéfice cumulé (€)</h3>
+        <div class="chart-wrap"><canvas id="chart-line"></canvas></div>
+        <p class="chart-empty" id="empty-line" style="display:none">
+          Aucune vente avec date de vente renseignée.
+        </p>
+      </div>
+
+      <!-- Camembert : répartition catégories -->
+      <div class="chart-card half">
+        <h3 class="chart-card-title">🥧 Répartition par catégorie</h3>
+        <div class="chart-wrap doughnut"><canvas id="chart-doughnut"></canvas></div>
+        <p class="chart-empty" id="empty-doughnut" style="display:none">
+          Aucun article.
+        </p>
+      </div>
+
+      <!-- Tableau par catégorie -->
+      <div class="chart-card half">
+        <h3 class="chart-card-title">🏷️ Analyse par catégorie</h3>
+        <div class="table-scroll">
+          <table class="data-table" id="cat-table">
+            <thead>
+              <tr>
+                <th>Catégorie</th><th>Vendus</th><th>Marge moy.</th><th>Temps moy.</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top 5 meilleurs -->
+      <div class="chart-card half">
+        <h3 class="chart-card-title">🏆 Top 5 — Meilleures marges</h3>
+        <div class="table-scroll">
+          <table class="data-table" id="top5-best">
+            <thead>
+              <tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Top 5 pires -->
+      <div class="chart-card half">
+        <h3 class="chart-card-title">📉 Top 5 — Pires marges</h3>
+        <div class="table-scroll">
+          <table class="data-table" id="top5-worst">
+            <thead>
+              <tr><th>Article</th><th>Marge</th><th>Bénéfice</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="./static/js/shared.js"></script>
+  <script src="./static/js/analytics.js"></script>
+</body>
+</html>
