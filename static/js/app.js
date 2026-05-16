@@ -1,11 +1,14 @@
 // ── Config Supabase ───────────────────────────────────────
 // Remplace ces deux valeurs par celles de ton projet Supabase
 // (Settings → API dans le dashboard)
-const SUPABASE_URL = 'https://glojwzaswaoradcxeqmx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdsb2p3emFzd2FvcmFkY3hlcW14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5MjMzNjcsImV4cCI6MjA5NDQ5OTM2N30.1DC5oDCa8667Nfjc9YL-xy7ZNvVgaE2dWFv4bKyp_GQ';
 
-const { createClient } = window.supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const API = 'https://glojwzaswaoradcxeqmx.supabase.co/rest/v1/articles';
+const HEADERS = {
+  'apikey':        SUPABASE_ANON_KEY,
+  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+  'Content-Type':  'application/json',
+};
 
 // ── Calcul frais Vinted ───────────────────────────────────
 const FEE_RATE = 0.05;
@@ -78,14 +81,12 @@ function registerSW() {
   }
 }
 
-// ── API Supabase ──────────────────────────────────────────
+// ── API Supabase (fetch REST) ─────────────────────────────
 async function loadAll() {
   try {
-    const { data, error } = await db
-      .from('articles')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
+    const res = await fetch(`${API}?order=created_at.desc`, { headers: HEADERS });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
     allArticles = data.map(computeArticle);
     renderStats(computeStats(allArticles));
     renderArticles();
@@ -108,13 +109,10 @@ async function submitForm(e) {
   };
 
   try {
-    let error;
-    if (id) {
-      ({ error } = await db.from('articles').update(payload).eq('id', id));
-    } else {
-      ({ error } = await db.from('articles').insert(payload));
-    }
-    if (error) throw error;
+    const res = id
+      ? await fetch(`${API}?id=eq.${id}`, { method: 'PATCH', headers: HEADERS, body: JSON.stringify(payload) })
+      : await fetch(API,                   { method: 'POST',  headers: HEADERS, body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error(await res.text());
     closeModal();
     await loadAll();
     showToast(id ? 'Article modifié ✓' : 'Article ajouté ✓');
@@ -127,8 +125,8 @@ async function submitForm(e) {
 async function confirmDelete() {
   if (!deleteTargetId) return;
   try {
-    const { error } = await db.from('articles').delete().eq('id', deleteTargetId);
-    if (error) throw error;
+    const res = await fetch(`${API}?id=eq.${deleteTargetId}`, { method: 'DELETE', headers: HEADERS });
+    if (!res.ok) throw new Error(await res.text());
     showModal('confirm-modal', false);
     deleteTargetId = null;
     await loadAll();
