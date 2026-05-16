@@ -40,6 +40,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body { height: 100%; }
+html { overflow-x: hidden; }
 
 body {
   background: var(--bg);
@@ -49,6 +50,7 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 /* ── Navigation ──────────────────────────────────────────── */
@@ -98,10 +100,59 @@ body {
   background: var(--accent-soft);
 }
 
-@media (max-width: 540px) {
-  .header-inner { padding: 0 16px; gap: 8px; }
-  .logo { font-size: 15px; }
-  .nav-link { padding: 7px 10px; font-size: 12px; }
+@media (max-width: 640px) {
+  .header-inner { padding: 0 14px; gap: 6px; }
+  .logo { font-size: 14px; }
+  .nav-link { padding: 6px 10px; font-size: 12px; }
+  /* Sur mobile, on cache les boutons icônes du header et le bouton ajouter
+     (remplacés par un FAB) */
+  .header-actions .btn-icon-sm,
+  .header-actions #btn-add { display: none; }
+}
+
+/* ── FAB : bouton flottant Ajouter (mobile) ─────────────── */
+.fab-add {
+  display: none;
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: 56px; height: 56px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(45,125,210,0.35);
+  z-index: 90;
+  transition: transform .15s, box-shadow .15s;
+}
+.fab-add:hover,
+.fab-add:active {
+  background: var(--accent-hover);
+  transform: scale(1.05);
+}
+.fab-actions {
+  display: none;
+  position: fixed;
+  right: 18px;
+  bottom: 86px;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 90;
+}
+.fab-actions .btn-icon-sm {
+  width: 44px; height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  font-size: 16px;
+}
+@media (max-width: 640px) {
+  .fab-add,
+  .fab-actions { display: flex; }
 }
 
 /* ── Buttons ─────────────────────────────────────────────── */
