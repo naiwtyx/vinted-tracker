@@ -1,4 +1,4 @@
-const CACHE = 'vinted-tracker-v11';
+const CACHE = 'vinted-tracker-v12';
 const STATIC = [
   './static/css/style.css',
   './static/js/shared.js',

@@ -64,30 +64,50 @@
       <!-- Dashboard : 5 stat cards -->
       <section class="dashboard">
         <div class="stat-card">
+          <div class="stat-icon si-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
           <span class="stat-label">Bénéfice réalisé</span>
           <span class="stat-value" id="stat-benefice">—</span>
+          <span class="stat-sub">Marge nette cumulée</span>
         </div>
         <div class="stat-card">
+          <div class="stat-icon si-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
           <span class="stat-label">Articles vendus</span>
           <span class="stat-value" id="stat-vendus">—</span>
+          <span class="stat-sub">Depuis le début</span>
         </div>
         <div class="stat-card">
+          <div class="stat-icon si-orange">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
           <span class="stat-label">Capital immobilisé</span>
           <span class="stat-value orange" id="stat-capital">—</span>
+          <span class="stat-sub">En attente de vente</span>
         </div>
         <!-- Objectif mensuel -->
         <div class="stat-card stat-card--clickable" title="Cliquer pour définir l'objectif">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
           <span class="stat-label">Objectif du mois</span>
           <span class="stat-value" id="stat-objective-val">—</span>
           <div class="progress-wrap" id="objective-bar-wrap" style="display:none">
             <div class="progress-fill" id="objective-bar"></div>
           </div>
+          <span class="stat-sub">Cliquer pour modifier</span>
         </div>
         <!-- Budget disponible -->
         <div class="stat-card stat-card--clickable" title="Cliquer pour définir votre budget de départ">
+          <div class="stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
+          </div>
           <span class="stat-label">Budget disponible</span>
           <span class="stat-value" id="stat-budget-val">—</span>
           <span class="stat-variation" id="stat-budget-variation"></span>
+          <span class="stat-sub">Cliquer pour définir</span>
         </div>
       </section>
 
@@ -157,9 +177,9 @@
           <input type="file" id="photo-input" accept="image/*" style="display:none" />
         </div>
       </div>
-      <div class="form-group">
-        <label for="nom">Nom de l'article *</label>
-        <input type="text" id="nom" placeholder="Ex : Nike Air Max 90" required />
+      <div class="form-field">
+        <input type="text" id="nom" placeholder=" " required />
+        <label for="nom">Nom de l'article <span class="req-star">*</span></label>
       </div>
       <div class="form-group">
         <label for="categorie">Catégorie</label>
@@ -172,13 +192,13 @@
         </select>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label for="prix_achat">Prix d'achat (€) *</label>
-          <input type="number" id="prix_achat" step="0.01" min="0" placeholder="0.00" required />
+        <div class="form-field">
+          <input type="number" id="prix_achat" step="0.01" min="0" placeholder=" " required />
+          <label for="prix_achat">Prix d'achat (€) <span class="req-star">*</span></label>
         </div>
-        <div class="form-group">
-          <label for="prix_vente">Prix de vente (€) *</label>
-          <input type="number" id="prix_vente" step="0.01" min="0" placeholder="0.00" required />
+        <div class="form-field">
+          <input type="number" id="prix_vente" step="0.01" min="0" placeholder=" " required />
+          <label for="prix_vente">Prix de vente (€) <span class="req-star">*</span></label>
         </div>
       </div>
       <div class="form-row">
@@ -288,6 +308,26 @@
     </div>
   </div>
 </div>
+
+<!-- ── Mobile bottom navigation ── -->
+<nav class="mobile-bottom-bar">
+  <a href="./index.html" class="mbb-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Tracker</span>
+  </a>
+  <a href="./analytics.html" class="mbb-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span>Analyses</span>
+  </a>
+  <button class="mbb-item mbb-add-btn" id="mbb-add">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <span>Ajouter</span>
+  </button>
+  <button class="mbb-item" id="mbb-settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Réglages</span>
+  </button>
+</nav>
 
 <script>
   const sidebar  = document.getElementById('sidebar');

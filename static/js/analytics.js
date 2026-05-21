@@ -7,7 +7,19 @@ Chart.defaults.font.size     = 12;
 const CHART_OPTS_BASE = {
   responsive: true,
   maintainAspectRatio: false,
-  animation: { duration: 500 },
+  animation: { duration: 600 },
+  plugins: {
+    tooltip: {
+      backgroundColor: '#1E3A5F',
+      titleColor: '#94A3B8',
+      bodyColor: '#FFFFFF',
+      padding: { x: 14, y: 10 },
+      cornerRadius: 10,
+      displayColors: false,
+      titleFont: { size: 11, weight: '500' },
+      bodyFont: { size: 13, weight: '700' },
+    },
+  },
 };
 
 // ── Init ──────────────────────────────────────────────────

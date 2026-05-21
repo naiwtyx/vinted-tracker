@@ -49,6 +49,7 @@
 
       <div id="analytics-content" style="display:none">
 
+        <h2 class="section-title">Indicateurs clés</h2>
         <!-- KPI grid (6 cards existantes) -->
         <section class="dashboard kpi-grid">
           <div class="stat-card">
@@ -95,6 +96,9 @@
           </div>
         </div>
 
+        <h2 class="section-title" style="margin-top:20px">ROI global</h2>
+
+        <h2 class="section-title">Graphiques & tableaux</h2>
         <!-- Graphiques -->
         <section class="analytics-section">
 
@@ -151,6 +155,18 @@
     </div>
   </div>
 </div>
+
+<!-- ── Mobile bottom navigation ── -->
+<nav class="mobile-bottom-bar">
+  <a href="./index.html" class="mbb-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Tracker</span>
+  </a>
+  <a href="./analytics.html" class="mbb-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span>Analyses</span>
+  </a>
+</nav>
 
 <script>
   const sidebar  = document.getElementById('sidebar');

@@ -20,6 +20,11 @@ let marginLow    = parseFloat(localStorage.getItem('margin_low')  || '20');
 let marginHigh   = parseFloat(localStorage.getItem('margin_high') || '40');
 let marginFilter = 'all';
 
+// ── SVG icons réutilisables ───────────────────────────────
+const SVG_EDIT  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+const SVG_SHARE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`;
+const SVG_TRASH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+
 // ── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -107,6 +112,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Mobile bottom bar
+  const mbbAdd      = document.getElementById('mbb-add');
+  const mbbSettings = document.getElementById('mbb-settings');
+  if (mbbAdd)      mbbAdd.addEventListener('click', openAddModal);
+  if (mbbSettings) mbbSettings.addEventListener('click', openSettings);
+
   // Filtre par marge
   document.querySelectorAll('.mf-btn').forEach(btn =>
     btn.addEventListener('click', () => {
@@ -127,6 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
       renderBudget();
     }
   });
+
+  // Validation temps réel
+  setupFormValidation();
 });
 
 // ── Chargement ────────────────────────────────────────────
@@ -358,9 +372,9 @@ function buildCard(a) {
         </div>
       </div>
       <div class="card-actions">
-        <button class="btn-icon edit">✏️ Modifier</button>
-        <button class="btn-icon share">🔗 Partager</button>
-        <button class="btn-icon delete">🗑️</button>
+        <button class="btn-action edit"  title="Modifier"   aria-label="Modifier">${SVG_EDIT}</button>
+        <button class="btn-action share" title="Partager"   aria-label="Partager">${SVG_SHARE}</button>
+        <button class="btn-action delete" title="Supprimer" aria-label="Supprimer" style="margin-left:auto">${SVG_TRASH}</button>
       </div>
     </div>`;
   card.querySelector('.edit').addEventListener('click',   () => openEditModal(a));
@@ -385,9 +399,9 @@ function buildSoldCard(a) {
         </span>
         ${a.date_vente ? `<span class="sold-card-date">${fmtDate(a.date_vente)}</span>` : ''}
       </div>
-      <div class="sold-card-actions">
-        <button class="btn-icon edit" style="font-size:11px;padding:5px 8px;">✏️</button>
-        <button class="btn-icon delete" style="font-size:11px;padding:5px 8px;">🗑️</button>
+      <div class="sold-card-actions" style="display:flex;gap:4px;margin-top:4px">
+        <button class="btn-action edit"   title="Modifier"   aria-label="Modifier">${SVG_EDIT}</button>
+        <button class="btn-action delete" title="Supprimer"  aria-label="Supprimer" style="margin-left:auto">${SVG_TRASH}</button>
       </div>
     </div>`;
   card.querySelector('.edit').addEventListener('click',   () => openEditModal(a));
@@ -415,13 +429,20 @@ function shareArticle(a) {
 // ── Formulaire ────────────────────────────────────────────
 async function submitForm(e) {
   e.preventDefault();
+  const submitBtn = document.querySelector('#article-form [type="submit"]');
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
+
   const id     = document.getElementById('article-id').value;
   const statut = document.getElementById('statut').value;
   let photo_url = document.getElementById('article-photo-url').value || null;
 
   if (currentPhotoFile) {
     try { photo_url = await uploadPhoto(currentPhotoFile); }
-    catch { showToast('Erreur upload photo', 'error'); return; }
+    catch {
+      showToast('Erreur upload photo', 'error');
+      submitBtn.classList.remove('loading'); submitBtn.disabled = false; return;
+    }
   }
 
   const payload = {
@@ -446,7 +467,30 @@ async function submitForm(e) {
     showToast(id ? 'Article modifié ✓' : 'Article ajouté ✓');
   } catch (err) {
     showToast('Erreur lors de l\'enregistrement', 'error'); console.error(err);
+  } finally {
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
   }
+}
+
+// ── Validation temps réel ─────────────────────────────────
+function setupFormValidation() {
+  const rules = [
+    { id: 'nom',        check: v => v.trim().length > 0 },
+    { id: 'prix_achat', check: v => v !== '' && parseFloat(v) >= 0 },
+    { id: 'prix_vente', check: v => v !== '' && parseFloat(v) >= 0 },
+  ];
+  rules.forEach(({ id, check }) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+    const update = () => {
+      const filled = input.value !== '';
+      input.classList.toggle('input-valid',   filled && check(input.value));
+      input.classList.toggle('input-invalid', filled && !check(input.value));
+    };
+    input.addEventListener('input', update);
+    input.addEventListener('blur',  update);
+  });
 }
 
 async function confirmDelete() {
@@ -520,7 +564,14 @@ function openEditModal(a) {
   showModal('modal', true);
 }
 
-function closeModal() { showModal('modal', false); currentPhotoFile = null; }
+function closeModal() {
+  showModal('modal', false);
+  currentPhotoFile = null;
+  ['nom', 'prix_achat', 'prix_vente'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('input-valid', 'input-invalid');
+  });
+}
 function askDelete(a) { deleteTargetId = a.id; deletePhotoUrl = a.photo_url || null; showModal('confirm-modal', true); }
 function showModal(id, show) {
   document.getElementById(id).style.display = show ? 'flex' : 'none';
