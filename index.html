@@ -112,6 +112,12 @@
           <button class="sort-btn" data-field="marge"        data-label="Marge">Marge</button>
           <button class="sort-btn" data-field="days_in_stock" data-label="Temps">Temps</button>
         </div>
+        <div class="margin-filter-bar" id="margin-filter-bar">
+          <button class="mf-btn active" data-mf="all">Tous</button>
+          <button class="mf-btn" data-mf="good">🟢 Bonne affaire</button>
+          <button class="mf-btn" data-mf="medium">🟠 Moyen</button>
+          <button class="mf-btn" data-mf="bad">🔴 Mauvaise affaire</button>
+        </div>
         <div class="result-count" id="result-count"></div>
 
         <main class="article-list" id="article-list">
@@ -248,6 +254,22 @@
       <input type="email" id="setting-email" placeholder="votre@email.com" />
       <span class="label-hint" style="margin-top:6px;display:block">
         Affiché sur la page publique quand tu partages un article.
+      </span>
+    </div>
+    <div class="form-group">
+      <label>Seuils de marge colorés</label>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label for="setting-margin-low">🔴 Seuil bas (%)</label>
+          <input type="number" id="setting-margin-low" min="0" max="99" placeholder="20" />
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label for="setting-margin-high">🟢 Seuil haut (%)</label>
+          <input type="number" id="setting-margin-high" min="0" max="99" placeholder="40" />
+        </div>
+      </div>
+      <span class="label-hint" style="margin-top:6px;display:block">
+        🔴 &lt; bas% · 🟠 entre les deux · 🟢 &gt; haut%
       </span>
     </div>
     <div class="form-actions" style="margin-top:8px">

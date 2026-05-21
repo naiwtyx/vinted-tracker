@@ -805,6 +805,38 @@ select {
 .stat-variation.negative { color: var(--red); }
 .stat-variation.neutral  { color: var(--text-soft); }
 
+/* ── Marge : code couleur ────────────────────────────────── */
+.marge-badge {
+  display: inline-flex; align-items: center;
+  font-size: 11.5px; font-weight: 700; padding: 3px 9px;
+  border-radius: var(--radius-pill); color: #fff;
+  white-space: nowrap; letter-spacing: 0.01em;
+}
+.marge-bad    { background: var(--red); }
+.marge-medium { background: var(--orange); }
+.marge-good   { background: var(--green); }
+
+/* Bordure gauche colorée sur la card */
+.article-card.marge-bad    { border-left: 3px solid var(--red); }
+.article-card.marge-medium { border-left: 3px solid var(--orange); }
+.article-card.marge-good   { border-left: 3px solid var(--green); }
+
+/* ── Filtre rapide par marge ──────────────────────────────── */
+.margin-filter-bar {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+}
+.mf-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text-muted); padding: 5px 12px;
+  font-family: inherit; font-size: 12px; font-weight: 500;
+  border-radius: var(--radius-pill); cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.mf-btn:hover { border-color: var(--accent); color: var(--accent); }
+.mf-btn.active                     { background: var(--accent); border-color: var(--accent);  color: #fff; }
+.mf-btn[data-mf="bad"].active    { background: var(--red);    border-color: var(--red); }
+.mf-btn[data-mf="medium"].active { background: var(--orange); border-color: var(--orange); }
+.mf-btn[data-mf="good"].active   { background: var(--green);  border-color: var(--green); }
+
 /* ── Utils ───────────────────────────────────────────────── */
 .green { color: var(--green) !important; }
 .red   { color: var(--red)   !important; }

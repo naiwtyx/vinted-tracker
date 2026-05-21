@@ -15,6 +15,11 @@ let sortDir     = 'desc';
 let monthlyGoal = parseFloat(localStorage.getItem('monthly_goal') || '0');
 let budgetBase  = parseFloat(localStorage.getItem('budget_base')  || '0');
 
+// Seuils de marge & filtre couleur
+let marginLow    = parseFloat(localStorage.getItem('margin_low')  || '20');
+let marginHigh   = parseFloat(localStorage.getItem('margin_high') || '40');
+let marginFilter = 'all';
+
 // ── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
@@ -101,6 +106,16 @@ document.addEventListener('DOMContentLoaded', () => {
       renderObjective();
     }
   });
+
+  // Filtre par marge
+  document.querySelectorAll('.mf-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+      marginFilter = btn.dataset.mf;
+      document.querySelectorAll('.mf-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderArticles();
+    })
+  );
 
   // Budget — inline edit
   document.getElementById('stat-budget-val').addEventListener('click', () => {
@@ -220,6 +235,13 @@ function updateSortButtons() {
   });
 }
 
+// ── Helpers marge ─────────────────────────────────────────
+function getMarginClass(marge) {
+  if (marge < marginLow)  return 'bad';
+  if (marge <= marginHigh) return 'medium';
+  return 'good';
+}
+
 // ── Filtrage + tri des articles en stock ──────────────────
 function getFilteredSorted() {
   let items = allArticles.filter(a => a.statut === 'en stock');
@@ -232,6 +254,11 @@ function getFilteredSorted() {
       String(a.prix_achat).includes(searchQuery) ||
       String(a.prix_vente).includes(searchQuery)
     );
+  }
+
+  // Filtre marge couleur
+  if (marginFilter !== 'all') {
+    items = items.filter(a => getMarginClass(a.marge) === marginFilter);
   }
 
   // Tri
@@ -295,8 +322,9 @@ function renderArticles() {
 // ── Card en stock ─────────────────────────────────────────
 function buildCard(a) {
   const warn = a.days_in_stock != null && a.days_in_stock > stockThreshold;
+  const mcls = getMarginClass(a.marge);
   const card = document.createElement('div');
-  card.className = 'article-card';
+  card.className = `article-card marge-${mcls}`;
   card.innerHTML = `
     ${a.photo_url ? `<img class="card-photo" src="${esc(a.photo_url)}" alt="${esc(a.nom)}" loading="lazy">` : ''}
     <div class="card-body">
@@ -326,7 +354,7 @@ function buildCard(a) {
         </div>
         <div class="price-item">
           <span class="price-label">Marge</span>
-          <span class="price-val ${a.marge>=0?'green':'red'}">${a.marge} %</span>
+          <span class="marge-badge marge-${mcls}">${a.marge} %</span>
         </div>
       </div>
       <div class="card-actions">
@@ -560,18 +588,23 @@ function exportCSV() {
 
 // ── Paramètres ────────────────────────────────────────────
 function openSettings() {
-  document.getElementById('setting-threshold').value = stockThreshold;
-  document.getElementById('setting-email').value = localStorage.getItem('contact_email') || '';
+  document.getElementById('setting-threshold').value    = stockThreshold;
+  document.getElementById('setting-email').value        = localStorage.getItem('contact_email') || '';
+  document.getElementById('setting-margin-low').value   = marginLow;
+  document.getElementById('setting-margin-high').value  = marginHigh;
   showModal('settings-modal', true);
 }
 function saveSettings() {
-  const v = parseInt(document.getElementById('setting-threshold').value);
+  const v     = parseInt(document.getElementById('setting-threshold').value);
   const email = document.getElementById('setting-email').value.trim();
-  if (v > 0) {
-    stockThreshold = v;
-    localStorage.setItem('stock_threshold', v);
-  }
+  const ml    = parseFloat(document.getElementById('setting-margin-low').value);
+  const mh    = parseFloat(document.getElementById('setting-margin-high').value);
+
+  if (v > 0)        { stockThreshold = v;  localStorage.setItem('stock_threshold', v); }
+  if (!isNaN(ml) && ml >= 0) { marginLow  = ml; localStorage.setItem('margin_low',  ml); }
+  if (!isNaN(mh) && mh >= 0) { marginHigh = mh; localStorage.setItem('margin_high', mh); }
   localStorage.setItem('contact_email', email);
+
   showModal('settings-modal', false);
   renderArticles();
   showToast('Paramètres enregistrés ✓');
