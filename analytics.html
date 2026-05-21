@@ -29,16 +29,8 @@
         <span class="sidebar-link-icon">📊</span> Analyses
       </a>
     </nav>
-
-    <span class="sidebar-section">Informations</span>
-    <div class="sidebar-actions">
-      <div class="sidebar-action" style="cursor:default;opacity:.6;font-size:13px;padding:8px 12px;">
-        Les données sont chargées depuis Supabase en temps réel.
-      </div>
-    </div>
   </aside>
 
-  <!-- Overlay mobile -->
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- ── Contenu principal ── -->
@@ -57,9 +49,10 @@
 
       <div id="analytics-content" style="display:none">
 
+        <!-- KPI grid (6 cards existantes) -->
         <section class="dashboard kpi-grid">
           <div class="stat-card">
-            <span class="stat-label">Bénéfice total</span>
+            <span class="stat-label">Bénéfice total réalisé</span>
             <span class="stat-value green" id="kpi-benefice-total">—</span>
           </div>
           <div class="stat-card">
@@ -84,6 +77,25 @@
           </div>
         </section>
 
+        <!-- Card dédiée : capital + ROI -->
+        <div class="roi-card">
+          <div class="roi-item">
+            <span class="roi-label">Capital total investi</span>
+            <span class="roi-value" id="kpi-capital-total">—</span>
+          </div>
+          <div class="roi-divider"></div>
+          <div class="roi-item">
+            <span class="roi-label">Bénéfice total réalisé</span>
+            <span class="roi-value green" id="kpi-benefice-total-2">—</span>
+          </div>
+          <div class="roi-divider"></div>
+          <div class="roi-item roi-item--highlight">
+            <span class="roi-label">ROI global</span>
+            <span class="roi-value" id="kpi-roi">—</span>
+          </div>
+        </div>
+
+        <!-- Graphiques -->
         <section class="analytics-section">
 
           <div class="chart-card full">

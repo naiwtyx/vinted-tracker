@@ -54,13 +54,11 @@
     </div>
   </aside>
 
-  <!-- Overlay mobile -->
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- ── Contenu principal ── -->
   <div class="main">
 
-    <!-- Topbar mobile -->
     <header class="topbar">
       <button class="hamburger" id="hamburger">☰</button>
       <span class="page-title">Tracker</span>
@@ -71,7 +69,7 @@
       <!-- Stats -->
       <section class="dashboard">
         <div class="stat-card">
-          <span class="stat-label">Bénéfice total</span>
+          <span class="stat-label">Bénéfice réalisé</span>
           <span class="stat-value" id="stat-benefice">—</span>
         </div>
         <div class="stat-card">
@@ -84,20 +82,26 @@
         </div>
       </section>
 
-      <!-- Filtres -->
-      <div class="filters">
-        <button class="filter-btn active" data-filter="tous">Tous</button>
-        <button class="filter-btn" data-filter="en stock">En stock</button>
-        <button class="filter-btn" data-filter="vendu">Vendus</button>
+      <!-- Onglets contenu -->
+      <div class="content-tabs">
+        <button class="content-tab active" data-tab="stock">En stock</button>
+        <button class="content-tab" data-tab="vendu">Vendus</button>
       </div>
 
-      <!-- Liste -->
+      <!-- Liste en stock -->
       <main class="article-list" id="article-list">
         <div class="empty-state" id="empty-state" style="display:none">
-          <p>Aucun article pour l'instant.</p>
+          <p>Aucun article en stock.</p>
           <p>Clique sur <strong>+ Ajouter</strong> pour commencer.</p>
         </div>
       </main>
+
+      <!-- Grille vendus -->
+      <div class="vendu-grid" id="vendu-list" style="display:none">
+        <div class="empty-state" id="empty-vendu" style="display:none">
+          <p>Aucun article vendu pour l'instant.</p>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -150,11 +154,6 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="frais_vinted">Frais Vinted (€) <span class="label-hint">auto si vide</span></label>
-        <input type="number" id="frais_vinted" step="0.01" min="0" placeholder="5 % + 0,70 €" />
-      </div>
-
       <div class="form-row">
         <div class="form-group">
           <label for="date_achat">Date d'achat</label>
@@ -175,7 +174,6 @@
       </div>
 
       <div class="preview-box" id="preview-box" style="display:none">
-        <div class="preview-row"><span>Frais estimés</span><span id="prev-frais">—</span></div>
         <div class="preview-row"><span>Bénéfice net</span><span id="prev-benefice">—</span></div>
         <div class="preview-row"><span>Marge</span><span id="prev-marge">—</span></div>
       </div>
@@ -201,14 +199,13 @@
     </div>
     <div class="form-group">
       <label for="calc-marge">Marge souhaitée (%)</label>
-      <input type="number" id="calc-marge" step="1" min="0" placeholder="30" />
+      <input type="number" id="calc-marge" step="1" min="0" max="99" placeholder="30" />
     </div>
     <div class="preview-box" id="calc-result" style="display:none">
       <div class="preview-row">
         <span>Prix de vente conseillé</span>
-        <span id="calc-vente" class="green" style="font-size:17px;font-weight:700">—</span>
+        <span id="calc-vente" class="green" style="font-size:18px;font-weight:700">—</span>
       </div>
-      <div class="preview-row"><span>Frais Vinted estimés</span><span id="calc-frais">—</span></div>
       <div class="preview-row"><span>Bénéfice net</span><span id="calc-benefice">—</span></div>
     </div>
   </div>
@@ -246,7 +243,6 @@
 </div>
 
 <script>
-  // Sidebar toggle (mobile)
   const sidebar  = document.getElementById('sidebar');
   const overlay  = document.getElementById('sidebar-overlay');
   const hamburger = document.getElementById('hamburger');
@@ -256,7 +252,6 @@
   hamburger.addEventListener('click', openSidebar);
   sidebarClose.addEventListener('click', closeSidebar);
   overlay.addEventListener('click', closeSidebar);
-  // Ferme la sidebar quand on clique sur un lien ou une action
   sidebar.querySelectorAll('.sidebar-link, .sidebar-action').forEach(el =>
     el.addEventListener('click', () => { if (window.innerWidth < 768) closeSidebar(); })
   );

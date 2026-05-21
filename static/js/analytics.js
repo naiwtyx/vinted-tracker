@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ── KPIs ──────────────────────────────────────────────────
 function renderKPIs(articles) {
-  const vendus   = articles.filter(a => a.statut === 'vendu');
-  const total    = articles.length;
+  const vendus = articles.filter(a => a.statut === 'vendu');
+  const total  = articles.length;
 
   // Bénéfice total
   const beneficeTotal = +vendus.reduce((s, a) => s + a.benefice_net, 0).toFixed(2);
@@ -50,7 +50,7 @@ function renderKPIs(articles) {
   document.getElementById('kpi-rotation').textContent =
     total ? Math.round((vendus.length / total) * 100) + ' %' : '—';
 
-  // Temps moyen de vente (global)
+  // Temps moyen de vente
   const durees = vendus
     .filter(a => a.date_achat && a.date_vente)
     .map(a => Math.round((new Date(a.date_vente) - new Date(a.date_achat)) / 86400000));
@@ -67,7 +67,7 @@ function renderKPIs(articles) {
   document.getElementById('kpi-meilleur-mois').textContent =
     bestMonth ? `${fmtMonth(bestMonth[0])} (${fmt(bestMonth[1])} €)` : '—';
 
-  // Meilleure catégorie (marge moy)
+  // Meilleure catégorie
   const byCat = {};
   vendus.forEach(a => {
     if (!byCat[a.categorie]) byCat[a.categorie] = [];
@@ -78,6 +78,20 @@ function renderKPIs(articles) {
     .sort((a, b) => b[1] - a[1])[0];
   document.getElementById('kpi-best-cat').textContent =
     bestCat ? `${bestCat[0]} (${bestCat[1]}%)` : '—';
+
+  // ── Capital total investi, bénéfice réalisé, ROI ──────
+  const capitalTotal = +articles.reduce((s, a) => s + a.prix_achat, 0).toFixed(2);
+  document.getElementById('kpi-capital-total').textContent = fmt(capitalTotal) + ' €';
+
+  // Copie du bénéfice total dans la roi-card
+  const b2El = document.getElementById('kpi-benefice-total-2');
+  b2El.textContent = fmt(beneficeTotal) + ' €';
+  b2El.className   = 'roi-value ' + (beneficeTotal >= 0 ? 'green' : 'red');
+
+  const roi = capitalTotal > 0 ? +((beneficeTotal / capitalTotal) * 100).toFixed(1) : null;
+  const roiEl = document.getElementById('kpi-roi');
+  roiEl.textContent = roi != null ? roi + ' %' : '—';
+  if (roi != null) roiEl.className = 'roi-value ' + (roi >= 0 ? 'green' : 'red');
 }
 
 // ── Bar chart : bénéfice par mois ────────────────────────

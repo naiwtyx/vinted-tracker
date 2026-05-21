@@ -1,6 +1,6 @@
 // ── État global ───────────────────────────────────────────
 let allArticles    = [];
-let currentFilter  = 'tous';
+let currentTab     = 'stock'; // 'stock' | 'vendu'
 let deleteTargetId = null;
 let deletePhotoUrl = null;
 let currentPhotoFile = null;
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
   loadAll();
 
-  // Header
+  // Sidebar / header buttons
   document.getElementById('btn-add').addEventListener('click', openAddModal);
   document.getElementById('btn-calc').addEventListener('click', openCalc);
   document.getElementById('btn-export').addEventListener('click', exportCSV);
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('date-vente-group').style.opacity =
       e.target.value === 'vendu' ? '1' : '0.4';
   });
-  ['prix_achat', 'prix_vente', 'frais_vinted'].forEach(id =>
+  ['prix_achat', 'prix_vente'].forEach(id =>
     document.getElementById(id).addEventListener('input', updatePreview)
   );
 
@@ -50,12 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('confirm-cancel').addEventListener('click', () => showModal('confirm-modal', false));
   document.getElementById('confirm-ok').addEventListener('click', confirmDelete);
 
-  // Filtres
-  document.querySelectorAll('.filter-btn').forEach(btn =>
+  // Onglets contenu (En stock / Vendus)
+  document.querySelectorAll('.content-tab').forEach(btn =>
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.content-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
+      currentTab = btn.dataset.tab;
       renderArticles();
     })
   );
@@ -87,23 +87,35 @@ function renderStats() {
     fmt(en_stock.reduce((s, a) => s + a.prix_achat, 0)) + ' €';
 }
 
-// ── Render articles ───────────────────────────────────────
+// ── Render articles (branching sur l'onglet actif) ────────
 function renderArticles() {
-  const list     = document.getElementById('article-list');
-  const empty    = document.getElementById('empty-state');
-  const filtered = currentFilter === 'tous'
-    ? allArticles : allArticles.filter(a => a.statut === currentFilter);
+  const stockList  = document.getElementById('article-list');
+  const venduList  = document.getElementById('vendu-list');
+  const stockEmpty = document.getElementById('empty-state');
+  const venduEmpty = document.getElementById('empty-vendu');
 
-  list.querySelectorAll('.article-card').forEach(el => el.remove());
-  if (!filtered.length) { empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-  filtered.forEach(a => list.appendChild(buildCard(a)));
+  if (currentTab === 'stock') {
+    stockList.style.display = '';
+    venduList.style.display = 'none';
+    const items = allArticles.filter(a => a.statut === 'en stock');
+    stockList.querySelectorAll('.article-card').forEach(el => el.remove());
+    stockEmpty.style.display = items.length ? 'none' : 'block';
+    items.forEach(a => stockList.appendChild(buildCard(a)));
+  } else {
+    stockList.style.display = 'none';
+    venduList.style.display = '';
+    const items = allArticles.filter(a => a.statut === 'vendu');
+    venduList.querySelectorAll('.sold-card').forEach(el => el.remove());
+    venduEmpty.style.display = items.length ? 'none' : 'block';
+    items.forEach(a => venduList.appendChild(buildSoldCard(a)));
+  }
 }
 
+// ── Card en stock (complète) ──────────────────────────────
 function buildCard(a) {
   const warn = a.days_in_stock != null && a.days_in_stock > stockThreshold;
   const card = document.createElement('div');
-  card.className = `article-card${a.statut === 'vendu' ? ' vendu' : ''}`;
+  card.className = 'article-card';
   card.innerHTML = `
     ${a.photo_url ? `<img class="card-photo" src="${esc(a.photo_url)}" alt="${esc(a.nom)}" loading="lazy">` : ''}
     <div class="card-body">
@@ -113,23 +125,58 @@ function buildCard(a) {
           <div class="card-meta">
             <span class="cat-badge cat-${esc(a.categorie||'Autre')}">${esc(a.categorie||'Autre')}</span>
             ${warn ? `<span class="badge-warning">⚠️ ${a.days_in_stock}j</span>` : ''}
-            ${a.statut==='en stock'&&a.date_achat ? `<span class="card-date">acheté le ${fmtDate(a.date_achat)}</span>` : ''}
-            ${a.statut==='vendu'&&a.date_vente ? `<span class="card-date">vendu le ${fmtDate(a.date_vente)}</span>` : ''}
+            ${a.date_achat ? `<span class="card-date">acheté le ${fmtDate(a.date_achat)}</span>` : ''}
           </div>
         </div>
-        <span class="badge ${a.statut==='vendu'?'badge-vendu':'badge-stock'}">
-          ${a.statut==='vendu'?'✓ Vendu':'📦 En stock'}
-        </span>
+        <span class="badge badge-stock">📦 En stock</span>
       </div>
       <div class="card-prices">
-        <div class="price-item"><span class="price-label">Achat</span><span class="price-val muted">${fmt(a.prix_achat)} €</span></div>
-        <div class="price-item"><span class="price-label">Vente</span><span class="price-val">${fmt(a.prix_vente)} €</span></div>
-        <div class="price-item"><span class="price-label">Bénéfice</span><span class="price-val ${a.benefice_net>=0?'green':'red'}">${fmt(a.benefice_net)} €</span></div>
-        <div class="price-item"><span class="price-label">Marge</span><span class="price-val ${a.marge>=0?'green':'red'}">${a.marge} %</span></div>
+        <div class="price-item">
+          <span class="price-label">Achat</span>
+          <span class="price-val muted">${fmt(a.prix_achat)} €</span>
+        </div>
+        <div class="price-item">
+          <span class="price-label">Vente visée</span>
+          <span class="price-val">${fmt(a.prix_vente)} €</span>
+        </div>
+        <div class="price-item">
+          <span class="price-label">Bénéfice</span>
+          <span class="price-val ${a.benefice_net>=0?'green':'red'}">${fmt(a.benefice_net)} €</span>
+        </div>
+        <div class="price-item">
+          <span class="price-label">Marge</span>
+          <span class="price-val ${a.marge>=0?'green':'red'}">${a.marge} %</span>
+        </div>
       </div>
       <div class="card-actions">
         <button class="btn-icon edit">✏️ Modifier</button>
         <button class="btn-icon delete">🗑️ Supprimer</button>
+      </div>
+    </div>`;
+  card.querySelector('.edit').addEventListener('click',   () => openEditModal(a));
+  card.querySelector('.delete').addEventListener('click', () => askDelete(a));
+  return card;
+}
+
+// ── Card vendu (compact) ──────────────────────────────────
+function buildSoldCard(a) {
+  const card = document.createElement('div');
+  card.className = 'sold-card';
+  card.innerHTML = `
+    ${a.photo_url
+      ? `<img class="sold-card-photo" src="${esc(a.photo_url)}" alt="${esc(a.nom)}" loading="lazy">`
+      : `<div class="sold-card-photo sold-card-nophoto"></div>`}
+    <div class="sold-card-body">
+      <span class="sold-card-name">${esc(a.nom)}</span>
+      <div class="sold-card-row">
+        <span class="sold-card-profit ${a.benefice_net >= 0 ? 'green' : 'red'}">
+          ${a.benefice_net >= 0 ? '+' : ''}${fmt(a.benefice_net)} €
+        </span>
+        ${a.date_vente ? `<span class="sold-card-date">${fmtDate(a.date_vente)}</span>` : ''}
+      </div>
+      <div class="sold-card-actions">
+        <button class="btn-icon edit" style="font-size:11px;padding:5px 8px;">✏️</button>
+        <button class="btn-icon delete" style="font-size:11px;padding:5px 8px;">🗑️</button>
       </div>
     </div>`;
   card.querySelector('.edit').addEventListener('click',   () => openEditModal(a));
@@ -150,15 +197,13 @@ async function submitForm(e) {
   }
 
   const payload = {
-    nom:          document.getElementById('nom').value.trim(),
-    categorie:    document.getElementById('categorie').value,
-    prix_achat:   parseFloat(document.getElementById('prix_achat').value),
-    prix_vente:   parseFloat(document.getElementById('prix_vente').value),
-    frais_vinted: document.getElementById('frais_vinted').value
-      ? parseFloat(document.getElementById('frais_vinted').value) : null,
+    nom:        document.getElementById('nom').value.trim(),
+    categorie:  document.getElementById('categorie').value,
+    prix_achat: parseFloat(document.getElementById('prix_achat').value),
+    prix_vente: parseFloat(document.getElementById('prix_vente').value),
     statut,
-    date_achat:  document.getElementById('date_achat').value  || null,
-    date_vente:  statut === 'vendu'
+    date_achat: document.getElementById('date_achat').value  || null,
+    date_vente: statut === 'vendu'
       ? (document.getElementById('date_vente').value || null) : null,
     photo_url,
   };
@@ -233,7 +278,6 @@ function openEditModal(a) {
   document.getElementById('categorie').value          = a.categorie || 'Autre';
   document.getElementById('prix_achat').value         = a.prix_achat;
   document.getElementById('prix_vente').value         = a.prix_vente;
-  document.getElementById('frais_vinted').value       = '';
   document.getElementById('statut').value             = a.statut;
   document.getElementById('date_achat').value         = a.date_achat || '';
   document.getElementById('date_vente').value         = a.date_vente || '';
@@ -284,12 +328,13 @@ function openCalc() {
 function updateCalc() {
   const achat = parseFloat(document.getElementById('calc-achat').value);
   const marge = parseFloat(document.getElementById('calc-marge').value);
-  if (!achat || isNaN(marge)) { document.getElementById('calc-result').style.display = 'none'; return; }
-  const vente   = (achat * (1 + marge / 100) + FEE_FIXED) / (1 - FEE_RATE);
-  const frais   = vente * FEE_RATE + FEE_FIXED;
-  const benefice = vente - achat - frais;
-  document.getElementById('calc-vente').textContent   = fmt(vente) + ' €';
-  document.getElementById('calc-frais').textContent   = fmt(frais) + ' €';
+  if (!achat || isNaN(marge) || marge >= 100) {
+    document.getElementById('calc-result').style.display = 'none'; return;
+  }
+  // Prix vente = achat / (1 - marge/100)
+  const vente   = achat / (1 - marge / 100);
+  const benefice = vente - achat;
+  document.getElementById('calc-vente').textContent = fmt(vente) + ' €';
   const bEl = document.getElementById('calc-benefice');
   bEl.textContent = fmt(benefice) + ' €';
   bEl.className   = benefice >= 0 ? 'green' : 'red';
@@ -299,7 +344,7 @@ function updateCalc() {
 // ── Export CSV ────────────────────────────────────────────
 function exportCSV() {
   if (!allArticles.length) { showToast('Aucun article à exporter', 'error'); return; }
-  const cols = ['id','nom','categorie','prix_achat','prix_vente','frais_vinted',
+  const cols = ['id','nom','categorie','prix_achat','prix_vente',
                 'benefice_net','marge','statut','date_achat','date_vente'];
   const csv  = [cols.join(';'),
     ...allArticles.map(a => cols.map(c => {
@@ -330,18 +375,16 @@ function saveSettings() {
   }
 }
 
-// ── Preview bénéfice ──────────────────────────────────────
+// ── Preview bénéfice dans le formulaire ───────────────────
 function updatePreview() {
-  const achat  = parseFloat(document.getElementById('prix_achat').value) || 0;
-  const vente  = parseFloat(document.getElementById('prix_vente').value) || 0;
-  const fraisI = parseFloat(document.getElementById('frais_vinted').value);
+  const achat = parseFloat(document.getElementById('prix_achat').value) || 0;
+  const vente = parseFloat(document.getElementById('prix_vente').value) || 0;
   if (!achat || !vente) { document.getElementById('preview-box').style.display = 'none'; return; }
-  const frais    = isNaN(fraisI) ? vente * FEE_RATE + FEE_FIXED : fraisI;
-  const benefice = vente - achat - frais;
-  document.getElementById('prev-frais').textContent   = fmt(frais) + ' €';
+  const benefice = vente - achat;
+  const marge    = achat ? ((benefice / achat) * 100).toFixed(1) : 0;
   const bEl = document.getElementById('prev-benefice');
-  bEl.textContent = fmt(benefice) + ' €'; bEl.className = benefice >= 0 ? 'green' : 'red';
-  document.getElementById('prev-marge').textContent   =
-    (achat ? ((benefice / achat) * 100).toFixed(1) : 0) + ' %';
+  bEl.textContent = fmt(benefice) + ' €';
+  bEl.className   = benefice >= 0 ? 'green' : 'red';
+  document.getElementById('prev-marge').textContent = marge + ' %';
   document.getElementById('preview-box').style.display = 'flex';
 }

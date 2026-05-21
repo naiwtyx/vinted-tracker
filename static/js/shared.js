@@ -10,9 +10,6 @@ const HEADERS = {
   'Content-Type':  'application/json',
 };
 
-const FEE_RATE  = 0.05;
-const FEE_FIXED = 0.70;
-
 const CAT_COLORS = {
   'Sneakers':     '#1F6BBD',
   'Vêtements':    '#4F46E5',
@@ -21,16 +18,13 @@ const CAT_COLORS = {
   'Autre':        '#64748B',
 };
 
-// ── Calcul article ────────────────────────────────────────
+// ── Calcul article (sans frais Vinted — gratuit pour le vendeur) ──
 function computeArticle(a) {
-  const frais        = a.frais_vinted != null
-    ? +a.frais_vinted
-    : +(a.prix_vente * FEE_RATE + FEE_FIXED).toFixed(2);
-  const benefice_net = +(a.prix_vente - a.prix_achat - frais).toFixed(2);
-  const marge        = a.prix_achat
+  const benefice_net  = +(a.prix_vente - a.prix_achat).toFixed(2);
+  const marge         = a.prix_achat
     ? +((benefice_net / a.prix_achat) * 100).toFixed(1) : 0;
   const days_in_stock = getDaysInStock(a);
-  return { ...a, frais_vinted: frais, benefice_net, marge, days_in_stock };
+  return { ...a, benefice_net, marge, days_in_stock };
 }
 
 function getDaysInStock(a) {
