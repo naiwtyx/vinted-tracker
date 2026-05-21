@@ -1,10 +1,11 @@
-const CACHE = 'vinted-tracker-v9';
+const CACHE = 'vinted-tracker-v10';
 const STATIC = [
   './static/css/style.css',
   './static/js/shared.js',
   './static/js/app.js',
   './static/js/analytics.js',
   './manifest.json',
+  './article.html',
 ];
 
 self.addEventListener('install', e => {

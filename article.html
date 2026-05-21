@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#FAFAFA" />
+  <title>Article — Vinted Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <style>
+    :root {
+      --bg: #FAFAFA; --surface: #fff; --border: #E5E9F0;
+      --text: #1E3A5F; --muted: #64748B; --soft: #94A3B8;
+      --accent: #2D7DD2; --accent-soft: #E8F1FB;
+      --green: #059669; --green-soft: #ECFDF5;
+      --red: #DC2626; --shadow: 0 4px 24px rgba(30,58,95,.10);
+      --radius: 16px; --radius-sm: 10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--bg); }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 15px; color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 24px 16px 48px;
+    }
+
+    /* Header minimal */
+    .pub-topbar {
+      width: 100%; max-width: 480px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .pub-brand { font-size: 14px; font-weight: 600; color: var(--muted); }
+    .pub-badge {
+      font-size: 12px; font-weight: 500; padding: 4px 12px;
+      border-radius: 999px; background: var(--green-soft); color: var(--green);
+    }
+    .pub-badge.sold { background: #FEF2F2; color: var(--red); }
+
+    /* Card principale */
+    .pub-card {
+      width: 100%; max-width: 480px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .pub-photo {
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: cover; display: block;
+      background: #F1F5F9;
+    }
+    .pub-photo-placeholder {
+      width: 100%; aspect-ratio: 4/3;
+      background: #F1F5F9;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; opacity: .3;
+    }
+
+    .pub-body { padding: 24px; }
+
+    .pub-cat {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .pub-nom {
+      font-size: 22px; font-weight: 700; color: var(--text);
+      line-height: 1.25; letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .pub-prix-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .pub-prix {
+      font-size: 32px; font-weight: 700; color: var(--text);
+      letter-spacing: -0.03em; margin-bottom: 24px;
+    }
+
+    .pub-contact {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; width: 100%; padding: 14px;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm); font-family: inherit;
+      font-size: 15px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      transition: background .15s;
+    }
+    .pub-contact:hover { background: #1F6BBD; }
+
+    .pub-copy {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; width: 100%; padding: 12px;
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      cursor: pointer; margin-top: 10px; transition: all .15s;
+    }
+    .pub-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* States */
+    .pub-loading, .pub-error {
+      text-align: center; padding: 60px 24px; color: var(--muted);
+      max-width: 480px; width: 100%;
+    }
+    .pub-error { color: var(--red); }
+  </style>
+</head>
+<body>
+
+  <div class="pub-topbar">
+    <span class="pub-brand">Vinted Tracker</span>
+    <span class="pub-badge" id="pub-statut-badge" style="display:none"></span>
+  </div>
+
+  <p class="pub-loading" id="pub-loading">Chargement…</p>
+  <p class="pub-error"   id="pub-error"   style="display:none">Article introuvable.</p>
+
+  <div class="pub-card" id="pub-card" style="display:none">
+    <img class="pub-photo" id="pub-photo" src="" alt="" style="display:none" />
+    <div class="pub-photo-placeholder" id="pub-photo-placeholder">📷</div>
+    <div class="pub-body">
+      <p class="pub-cat"  id="pub-cat"></p>
+      <h1 class="pub-nom" id="pub-nom"></h1>
+      <p class="pub-prix-label">Prix de vente</p>
+      <p class="pub-prix" id="pub-prix"></p>
+      <a  class="pub-contact" id="pub-contact" href="#" style="display:none">
+        ✉ Contacter le vendeur
+      </a>
+      <button class="pub-copy" id="pub-copy">🔗 Copier le lien</button>
+    </div>
+  </div>
+
+  <script src="./static/js/shared.js"></script>
+  <script>
+    (async () => {
+      const params  = new URLSearchParams(location.search);
+      const id      = params.get('id');
+      const contact = params.get('contact');
+
+      if (!id) { showErr('Identifiant manquant.'); return; }
+
+      try {
+        const res = await fetch(
+          `${API}?id=eq.${encodeURIComponent(id)}&select=nom,categorie,prix_vente,photo_url,statut`,
+          { headers: HEADERS }
+        );
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (!data.length) { showErr('Cet article n\'existe pas ou a été supprimé.'); return; }
+
+        const a = data[0];
+        render(a, contact);
+      } catch {
+        showErr('Impossible de charger l\'article. Vérifie ta connexion.');
+      }
+    })();
+
+    function render(a, contact) {
+      document.getElementById('pub-loading').style.display = 'none';
+      document.getElementById('pub-card').style.display    = 'block';
+
+      // Photo
+      if (a.photo_url) {
+        const img = document.getElementById('pub-photo');
+        img.src = a.photo_url;
+        img.style.display = 'block';
+        document.getElementById('pub-photo-placeholder').style.display = 'none';
+      }
+
+      // Badge statut
+      const badge = document.getElementById('pub-statut-badge');
+      badge.style.display = '';
+      if (a.statut === 'vendu') {
+        badge.textContent = 'Vendu';
+        badge.classList.add('sold');
+      } else {
+        badge.textContent = 'Disponible';
+      }
+
+      // Infos
+      document.getElementById('pub-cat').textContent  = a.categorie || 'Autre';
+      document.getElementById('pub-nom').textContent  = a.nom;
+      document.getElementById('pub-prix').textContent = fmt(a.prix_vente) + ' €';
+
+      // Titre de page
+      document.title = `${a.nom} — ${fmt(a.prix_vente)} €`;
+
+      // Bouton contact
+      if (contact) {
+        const btn = document.getElementById('pub-contact');
+        btn.href = `mailto:${contact}?subject=${encodeURIComponent('Article : ' + a.nom)}&body=${encodeURIComponent('Bonjour, je suis intéressé par votre article "' + a.nom + '" vendu ' + fmt(a.prix_vente) + ' €.')}`;
+        btn.style.display = 'flex';
+      }
+
+      // Copier le lien
+      document.getElementById('pub-copy').addEventListener('click', () => {
+        navigator.clipboard.writeText(location.href)
+          .then(() => {
+            const btn = document.getElementById('pub-copy');
+            btn.textContent = '✓ Lien copié !';
+            setTimeout(() => { btn.textContent = '🔗 Copier le lien'; }, 2000);
+          });
+      });
+    }
+
+    function showErr(msg) {
+      document.getElementById('pub-loading').style.display = 'none';
+      const el = document.getElementById('pub-error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

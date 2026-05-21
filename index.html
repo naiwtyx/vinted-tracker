@@ -25,7 +25,6 @@
       <span class="sidebar-logo">Vinted Tracker</span>
       <button class="sidebar-close" id="sidebar-close">✕</button>
     </div>
-
     <span class="sidebar-section">Navigation</span>
     <nav class="sidebar-nav">
       <a href="./index.html" class="sidebar-link active">
@@ -35,7 +34,6 @@
         <span class="sidebar-link-icon">📊</span> Analyses
       </a>
     </nav>
-
     <span class="sidebar-section">Actions</span>
     <div class="sidebar-actions">
       <button class="sidebar-action" id="btn-calc">
@@ -48,17 +46,14 @@
         <span class="sidebar-link-icon">⚙</span> Paramètres
       </button>
     </div>
-
     <div class="sidebar-add">
       <button class="btn-primary" id="btn-add">+ Ajouter un article</button>
     </div>
   </aside>
-
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-  <!-- ── Contenu principal ── -->
+  <!-- ── Main ── -->
   <div class="main">
-
     <header class="topbar">
       <button class="hamburger" id="hamburger">☰</button>
       <span class="page-title">Tracker</span>
@@ -66,7 +61,7 @@
 
     <div class="page-content">
 
-      <!-- Stats -->
+      <!-- Dashboard : 5 stat cards -->
       <section class="dashboard">
         <div class="stat-card">
           <span class="stat-label">Bénéfice réalisé</span>
@@ -80,6 +75,20 @@
           <span class="stat-label">Capital immobilisé</span>
           <span class="stat-value orange" id="stat-capital">—</span>
         </div>
+        <!-- Objectif mensuel -->
+        <div class="stat-card stat-card--clickable" title="Cliquer pour définir l'objectif">
+          <span class="stat-label">Objectif du mois</span>
+          <span class="stat-value" id="stat-objective-val">—</span>
+          <div class="progress-wrap" id="objective-bar-wrap" style="display:none">
+            <div class="progress-fill" id="objective-bar"></div>
+          </div>
+        </div>
+        <!-- Budget disponible -->
+        <div class="stat-card stat-card--clickable" title="Cliquer pour définir votre budget de départ">
+          <span class="stat-label">Budget disponible</span>
+          <span class="stat-value" id="stat-budget-val">—</span>
+          <span class="stat-variation" id="stat-budget-variation"></span>
+        </div>
       </section>
 
       <!-- Onglets contenu -->
@@ -88,15 +97,32 @@
         <button class="content-tab" data-tab="vendu">Vendus</button>
       </div>
 
-      <!-- Liste en stock -->
-      <main class="article-list" id="article-list">
-        <div class="empty-state" id="empty-state" style="display:none">
-          <p>Aucun article en stock.</p>
-          <p>Clique sur <strong>+ Ajouter</strong> pour commencer.</p>
+      <!-- Section En stock -->
+      <div id="stock-section">
+        <!-- Barre recherche + tri -->
+        <div class="search-bar">
+          <input type="search" id="search-input"
+            placeholder="Rechercher par nom, catégorie ou prix…" />
         </div>
-      </main>
+        <div class="sort-bar">
+          <span class="sort-label">Trier :</span>
+          <button class="sort-btn active" data-field="created_at" data-label="Date">Date ↓</button>
+          <button class="sort-btn" data-field="nom"          data-label="Nom">Nom</button>
+          <button class="sort-btn" data-field="prix_achat"   data-label="Prix">Prix</button>
+          <button class="sort-btn" data-field="marge"        data-label="Marge">Marge</button>
+          <button class="sort-btn" data-field="days_in_stock" data-label="Temps">Temps</button>
+        </div>
+        <div class="result-count" id="result-count"></div>
 
-      <!-- Grille vendus -->
+        <main class="article-list" id="article-list">
+          <div class="empty-state" id="empty-state" style="display:none">
+            <p>Aucun article en stock.</p>
+            <p>Clique sur <strong>+ Ajouter</strong> pour commencer.</p>
+          </div>
+        </main>
+      </div>
+
+      <!-- Section Vendus -->
       <div class="vendu-grid" id="vendu-list" style="display:none">
         <div class="empty-state" id="empty-vendu" style="display:none">
           <p>Aucun article vendu pour l'instant.</p>
@@ -117,7 +143,6 @@
     <form id="article-form" autocomplete="off">
       <input type="hidden" id="article-id" />
       <input type="hidden" id="article-photo-url" />
-
       <div class="form-group">
         <label>Photo</label>
         <div class="photo-upload" id="photo-upload-area">
@@ -126,12 +151,10 @@
           <input type="file" id="photo-input" accept="image/*" style="display:none" />
         </div>
       </div>
-
       <div class="form-group">
         <label for="nom">Nom de l'article *</label>
         <input type="text" id="nom" placeholder="Ex : Nike Air Max 90" required />
       </div>
-
       <div class="form-group">
         <label for="categorie">Catégorie</label>
         <select id="categorie">
@@ -142,7 +165,6 @@
           <option value="Autre" selected>Autre</option>
         </select>
       </div>
-
       <div class="form-row">
         <div class="form-group">
           <label for="prix_achat">Prix d'achat (€) *</label>
@@ -153,7 +175,6 @@
           <input type="number" id="prix_vente" step="0.01" min="0" placeholder="0.00" required />
         </div>
       </div>
-
       <div class="form-row">
         <div class="form-group">
           <label for="date_achat">Date d'achat</label>
@@ -164,7 +185,6 @@
           <input type="date" id="date_vente" />
         </div>
       </div>
-
       <div class="form-group">
         <label for="statut">Statut</label>
         <select id="statut">
@@ -172,12 +192,10 @@
           <option value="vendu">Vendu</option>
         </select>
       </div>
-
       <div class="preview-box" id="preview-box" style="display:none">
         <div class="preview-row"><span>Bénéfice net</span><span id="prev-benefice">—</span></div>
         <div class="preview-row"><span>Marge</span><span id="prev-marge">—</span></div>
       </div>
-
       <div class="form-actions">
         <button type="button" class="btn-secondary" id="form-cancel">Annuler</button>
         <button type="submit" class="btn-primary">Enregistrer</button>
@@ -222,7 +240,14 @@
       <label for="setting-threshold">Alerte stock (jours)</label>
       <input type="number" id="setting-threshold" min="1" max="365" value="30" />
       <span class="label-hint" style="margin-top:6px;display:block">
-        Badge d'alerte si un article reste en stock plus de X jours.
+        Badge d'alerte si un article est en stock depuis plus de X jours.
+      </span>
+    </div>
+    <div class="form-group">
+      <label for="setting-email">Email de contact (pour le partage)</label>
+      <input type="email" id="setting-email" placeholder="votre@email.com" />
+      <span class="label-hint" style="margin-top:6px;display:block">
+        Affiché sur la page publique quand tu partages un article.
       </span>
     </div>
     <div class="form-actions" style="margin-top:8px">

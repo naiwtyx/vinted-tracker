@@ -699,6 +699,112 @@ select {
 .roi-value.green { color: var(--green); }
 .roi-value.red   { color: var(--red); }
 
+/* ── Search bar ──────────────────────────────────────────── */
+.search-bar {
+  margin-top: 16px;
+}
+.search-bar input[type="search"] {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  transition: all .15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.search-bar input[type="search"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.search-bar input[type="search"]::placeholder { color: var(--text-soft); }
+
+/* ── Sort bar ────────────────────────────────────────────── */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.sort-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+.sort-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 5px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.sort-btn:hover { color: var(--accent); border-color: var(--accent); }
+.sort-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Result count ────────────────────────────────────────── */
+.result-count {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-top: 8px;
+  min-height: 18px;
+}
+
+/* ── Clickable stat cards ─────────────────────────────────── */
+.stat-card--clickable {
+  cursor: pointer;
+  transition: box-shadow .15s, transform .15s;
+}
+.stat-card--clickable:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+/* ── Progress bar (objectif mensuel) ─────────────────────── */
+.progress-wrap {
+  width: 100%;
+  height: 6px;
+  background: var(--border);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin-top: 4px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width .4s ease;
+}
+.progress-fill.blue   { background: var(--accent); }
+.progress-fill.orange { background: var(--orange); }
+.progress-fill.green  { background: var(--green); }
+
+/* ── Budget variation (sous la valeur) ───────────────────── */
+.stat-variation {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+.stat-variation.positive { color: var(--green); }
+.stat-variation.negative { color: var(--red); }
+.stat-variation.neutral  { color: var(--text-soft); }
+
 /* ── Utils ───────────────────────────────────────────────── */
 .green { color: var(--green) !important; }
 .red   { color: var(--red)   !important; }
